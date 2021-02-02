@@ -1,7 +1,7 @@
 package util
 
 import (
-	"awesomeProject/service"
+	"go-kit-microservice-demo/service"
 	"fmt"
 	"github.com/go-kit/kit/log"
 	"time"

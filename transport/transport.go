@@ -1,7 +1,7 @@
 package transport
 
 import (
-	"awesomeProject/endpoint"
+	"go-kit-microservice-demo/endpoint"
 	"context"
 	"encoding/json"
 	"github.com/go-kit/kit/log"

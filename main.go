@@ -1,10 +1,10 @@
 package main
 
 import (
-	"awesomeProject/endpoint"
-	"awesomeProject/service"
-	"awesomeProject/transport"
-	"awesomeProject/util"
+	"go-kit-microservice-demo/endpoint"
+	"go-kit-microservice-demo/service"
+	"go-kit-microservice-demo/transport"
+	"go-kit-microservice-demo/util"
 	"github.com/go-kit/kit/log"
 	"net/http"
 	"os"

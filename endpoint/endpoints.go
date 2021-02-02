@@ -1,7 +1,7 @@
 package endpoint
 
 import (
-	"awesomeProject/service"
+	"go-kit-microservice-demo/service"
 	"context"
 	"github.com/go-kit/kit/endpoint"
 )
