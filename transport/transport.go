@@ -25,6 +25,13 @@ func NewHTTPHandler (ep endpoint.Set) http.Handler {
 		decodeHTTPAddRequest,
 		encodeResponse,
 		))
+
+	m.Handle("/login", kithttp.NewServer(
+		ep.LoginEndpoint,
+		decodeHTTPLoginRequest,
+		encodeResponse,
+	))
+
 	return m
 }
 
@@ -34,6 +41,15 @@ func decodeHTTPAddRequest (_ context.Context, r *http.Request) (interface{}, err
 	if err != nil {
 		logger.Log(err.Error())
 		return req, err
+	}
+	return req, nil
+}
+
+func decodeHTTPLoginRequest (ctx context.Context, r *http.Request) (interface{}, error) {
+	var req endpoint.LoginRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		return nil, err
 	}
 	return req, nil
 }
