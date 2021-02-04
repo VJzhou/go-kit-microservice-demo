@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/go-kit/kit/log"
 	kithttp "github.com/go-kit/kit/transport/http"
+	"go-kit-microservice-demo/util"
 	"net/http"
 	"os"
 )
@@ -20,16 +21,25 @@ func init () {
 func NewHTTPHandler (ep endpoint.Set) http.Handler {
 	m := http.NewServeMux()
 
+	options := []kithttp.ServerOption{
+		kithttp.ServerBefore(func(ctx context.Context, request *http.Request) context.Context {
+			ctx = context.WithValue(ctx, util.JWT_CONTEXT_KEY, request.Header.Get("Authorization"))
+			return ctx
+		}),
+	}
+
 	m.Handle("/add", kithttp.NewServer(
-		ep.AddEndpoint,
+		endpoint.AuthMiddleware()(ep.AddEndpoint),
 		decodeHTTPAddRequest,
 		encodeResponse,
+		options...
 		))
 
 	m.Handle("/login", kithttp.NewServer(
 		ep.LoginEndpoint,
 		decodeHTTPLoginRequest,
 		encodeResponse,
+		options...
 	))
 
 	return m

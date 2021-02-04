@@ -15,12 +15,12 @@ type Token struct {
 	Username string
 	jwt.StandardClaims
 }
-
+// 生成token
 func GenerateToken (username string, id int) (string, error) {
 	var token Token
 	token.StandardClaims = jwt.StandardClaims{
 		Audience:  "", // 受众群体
-		ExpiresAt: time.Now().Add(30 * time.Second).Unix(), // 到期时间
+		ExpiresAt: time.Now().Add(60 * time.Second).Unix(), // 到期时间
 		Id:        "", // 编号
 		IssuedAt:  time.Now().Unix(), // 签发时间
 		Issuer:    "kit-demo", // 签发人
@@ -34,6 +34,7 @@ func GenerateToken (username string, id int) (string, error) {
 	return tokenClaims.SignedString(jwtSecret)
 }
 
+// 解析token
 func ParseToken(token string) (jwt.MapClaims, error) {
 	jwtToken, err := jwt.ParseWithClaims(token, jwt.MapClaims{}, func(token *jwt.Token) (i interface{}, err error) {
 		return jwtSecret, nil
