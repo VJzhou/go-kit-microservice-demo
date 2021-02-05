@@ -44,7 +44,7 @@ func NewEndpointSet(svc service.Service) Set {
 func MakeAddEndpoint (svc service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(AddRequest)
-		sum := svc.Add(req.Num1, req.Num2)
+		sum := svc.Add(ctx, req.Num1, req.Num2)
 		return AddResponse{Sum:sum}, nil
 	}
 }
@@ -52,7 +52,7 @@ func MakeAddEndpoint (svc service.Service) endpoint.Endpoint {
 func MakeLoginEndpoint (svc service.Service) endpoint.Endpoint{
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(LoginRequest)
-		token ,err := svc.Login(req.Username, req.Password)
+		token ,err := svc.Login(ctx, req.Username, req.Password)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +67,6 @@ func (s *Set) Add (ctx context.Context, num1, num2 int) int {
 }
 
 func (s *Set) Login (ctx context.Context, username, password string) (string ,  error) {
-
 	resp, err := s.LoginEndpoint(ctx, LoginRequest{username, password})
 	if err != nil {
 		return "", err

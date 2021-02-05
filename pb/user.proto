@@ -1,0 +1,12 @@
+syntax="proto3";
+
+package pb;
+
+message Login {
+    string Username = 1;
+    string Password = 2;
+}
+
+message LoginReply {
+    string Token = 1;
+}
