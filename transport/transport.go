@@ -1,14 +1,16 @@
 package transport
 
 import (
-	"go-kit-microservice-demo/endpoint"
 	"context"
 	"encoding/json"
 	"github.com/go-kit/kit/log"
 	kithttp "github.com/go-kit/kit/transport/http"
+	"go-kit-microservice-demo/endpoint"
 	"go-kit-microservice-demo/util"
+	"golang.org/x/time/rate"
 	"net/http"
 	"os"
+	"time"
 )
 
 var logger log.Logger
@@ -28,8 +30,16 @@ func NewHTTPHandler (ep endpoint.Set) http.Handler {
 		}),
 	}
 
+	//uberLimit := ratelimit.New(10)
+	limit := rate.NewLimiter(rate.Every(10 * time.Second),1)
+
+	addAddEndpoint := ep.AddEndpoint
+	addAddEndpoint = endpoint.AuthMiddleware()(addAddEndpoint)
+	//addAddEndpoint = endpoint.RateLimitMiddleware(uberLimit)(addAddEndpoint)
+	addAddEndpoint = endpoint.GolandRateLimitMiddleware(limit)(addAddEndpoint)
+
 	m.Handle("/add", kithttp.NewServer(
-		endpoint.AuthMiddleware()(ep.AddEndpoint),
+		addAddEndpoint,
 		decodeHTTPAddRequest,
 		encodeResponse,
 		options...

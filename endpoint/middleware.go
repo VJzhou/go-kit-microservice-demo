@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"go-kit-microservice-demo/util"
+	uberlimit "go.uber.org/ratelimit"
+	"golang.org/x/time/rate"
+
 )
 
 func AuthMiddleware () endpoint.Middleware {
@@ -28,3 +31,25 @@ func AuthMiddleware () endpoint.Middleware {
 		}
 	}
 }
+
+func UberRateLimitMiddleware (limit uberlimit.Limiter) endpoint.Middleware{
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			limit.Take()
+			return next(ctx, request)
+		}
+	}
+}
+
+func GolandRateLimitMiddleware (limit *rate.Limiter)endpoint.Middleware {
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			if !limit.Allow() {
+				return nil, errors.New("bad request")
+			}
+			return next(ctx, request)
+		}
+	}
+}
+
+
