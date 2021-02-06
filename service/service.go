@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"go-kit-microservice-demo/pb"
 	"go-kit-microservice-demo/util"
 )
 
@@ -10,6 +11,7 @@ import (
 type Service interface {
 	Add (ctx context.Context, num1 ,num2 int) int
 	Login(ctx context.Context,username, password string) (string , error)
+	RpcLogin(ctx context.Context, login *pb.Login) (*pb.LoginReply, error)
 }
 
 type addService struct {}
@@ -29,4 +31,17 @@ func (a addService) Login(_ context.Context,username, password string) (string, 
 		return util.GenerateToken(username, 1)
 	}
 	return "", errors.New("Account error")
+}
+
+func (a addService) RpcLogin(ctx context.Context, login *pb.Login) (*pb.LoginReply, error) {
+	if login.Username == "vj" && login.Password == "123" {
+		token, err:= util.GenerateToken("vj", 2)
+		if err != nil {
+			return nil, err
+		}
+		return &pb.LoginReply{
+			Token:                token,
+		}, nil
+	}
+	return nil, errors.New("Account Error")
 }

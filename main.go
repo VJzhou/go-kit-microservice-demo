@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-kit/kit/log"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"go-kit-microservice-demo/endpoint"
 	"go-kit-microservice-demo/pb"
@@ -14,10 +13,10 @@ import (
 )
 
 func main () {
-	logger := log.NewLogfmtLogger(os.Stderr)
+	//logger := log.NewLogfmtLogger(os.Stderr)
 
 	server := service.NewService()
-	server = LoggingMiddleware{logger, server}
+	//server = LoggingMiddleware{logger, server}
 	endpoints := endpoint.NewEndpointSet(server)
 	//httpHandle := transport.NewHTTPHandler(endpoints)
 

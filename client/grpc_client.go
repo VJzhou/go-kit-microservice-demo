@@ -10,8 +10,8 @@ import (
 )
 
 func NewGRPCClient(conn *grpc.ClientConn) service.Service {
-	loginEndpoint := kitgrpc.NewClient(conn, "pb.User", "RpcLogin", RequestLogin, ResponseLogin, pb.LoginReply{}).Endpoint()
-	return &endpoint.Set{LoginEndpoint: loginEndpoint}
+	rpcLoginEndpoint := kitgrpc.NewClient(conn, "pb.User", "RpcLogin", RequestLogin, ResponseLogin, pb.LoginReply{}).Endpoint()
+	return &endpoint.Set{RpcLoginEndpoint:rpcLoginEndpoint}
 }
 
 func RequestLogin (ctx context.Context, request interface{}) (interface{}, error) {

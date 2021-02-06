@@ -3,6 +3,7 @@ package endpoint
 import (
 	"context"
 	"github.com/go-kit/kit/endpoint"
+	"go-kit-microservice-demo/pb"
 	"go-kit-microservice-demo/service"
 )
 
@@ -31,6 +32,7 @@ type LoginResponse struct {
 type Set struct {
 	AddEndpoint endpoint.Endpoint
 	LoginEndpoint endpoint.Endpoint
+	RpcLoginEndpoint endpoint.Endpoint
 }
 
 // 集合工厂函数
@@ -38,6 +40,7 @@ func NewEndpointSet(svc service.Service) Set {
 	return Set{
 		AddEndpoint:MakeAddEndpoint(svc),
 		LoginEndpoint:MakeLoginEndpoint(svc),
+		RpcLoginEndpoint:MakeRpcLoginEndpoint(svc),
 	}
 }
 
@@ -60,6 +63,13 @@ func MakeLoginEndpoint (svc service.Service) endpoint.Endpoint{
 	}
 }
 
+func MakeRpcLoginEndpoint (svc service.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		req := request.(*pb.Login)
+		return svc.RpcLogin(ctx, req)
+	}
+}
+
 func (s *Set) Add (ctx context.Context, num1, num2 int) int {
 	resp, _ := s.AddEndpoint(ctx, AddRequest{num1, num2})
 	getResp := resp.(AddResponse)
@@ -73,5 +83,13 @@ func (s *Set) Login (ctx context.Context, username, password string) (string ,  
 	}
 	getResp := resp.(LoginResponse)
 	return getResp.Token, nil
+}
+
+func (s *Set) RpcLogin (ctx context.Context, login *pb.Login) (*pb.LoginReply, error) {
+	res , err := s.RpcLoginEndpoint(ctx, login)
+	if err != nil {
+		return nil, err
+	}
+	return res.(*pb.LoginReply), nil
 }
 

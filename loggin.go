@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"go-kit-microservice-demo/pb"
 	"go-kit-microservice-demo/service"
 	"fmt"
 	"github.com/go-kit/kit/log"
@@ -36,5 +37,18 @@ func (l LoggingMiddleware) Add (ctx context.Context,  num1, num2 int) (ret int) 
 		)
 	}(time.Now())
 	ret = l.Next.Add(ctx, num1, num2)
+	return
+}
+
+func (l LoggingMiddleware) RpcLogin (ctx context.Context, login *pb.Login) (reply *pb.LoginReply,err error) {
+	defer func(begin time.Time) {
+		_ = l.Logger.Log(
+			"method", "RpcLogin",
+			"input", fmt.Sprintf("username:%s, password:%d", login.Username, login.Password),
+			"output" , reply.Token,
+			"took", time.Since(begin),
+		)
+	}(time.Now())
+	reply, err = l.Next.RpcLogin(ctx, login)
 	return
 }

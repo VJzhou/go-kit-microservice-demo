@@ -18,7 +18,7 @@ func NewRPCServer (ep endpoint.Set)  pb.UserServer{
 	//	}),
 	//}
 	return &grpcServer{login:kitgrpc.NewServer(
-			ep.LoginEndpoint,
+			ep.RpcLoginEndpoint,
 			RequestGrpcLogin,
 			ResponseGrpcLogin,
 		)}
@@ -44,7 +44,7 @@ func RequestGrpcLogin (ctx context.Context, grpcReq interface{}) (interface{}, e
 func ResponseGrpcLogin (ctx context.Context, response interface{}) (interface{}, error) {
 	resp := response.(*pb.LoginReply)
 	return &pb.LoginReply{
-		Token:                resp.GetToken(),
-		//Token:                resp.Token,
+		//Token:                resp.GetToken(),
+		Token:                resp.Token,
 	}, nil
 }

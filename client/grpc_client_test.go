@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"go-kit-microservice-demo/pb"
 	"google.golang.org/grpc"
 	"testing"
 )
@@ -12,13 +13,15 @@ func TestNewGRPCClient(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
 	defer conn.Close()
 	svc := NewGRPCClient(conn)
-	token, err := svc.Login(context.Background(), "vj", "111")
+	reply, err := svc.RpcLogin(context.Background(), &pb.Login{
+		Username:             "vj",
+		Password:             "123",
+	})
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	t.Log(token)
+	t.Log(reply.Token)
 }
