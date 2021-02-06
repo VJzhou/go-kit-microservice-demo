@@ -11,6 +11,8 @@ type Service interface {
 	Login(username, password string) (string , error)
 }
 
+type ServiceMiddleware func(service Service) Service
+
 type addService struct {}
 
 // 工厂函数

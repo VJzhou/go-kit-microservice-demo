@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-kit/kit/log"
 	kithttp "github.com/go-kit/kit/transport/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go-kit-microservice-demo/endpoint"
 	"go-kit-microservice-demo/util"
 	"golang.org/x/time/rate"
@@ -51,6 +52,8 @@ func NewHTTPHandler (ep endpoint.Set) http.Handler {
 		encodeResponse,
 		options...
 	))
+
+	m.Handle("/metric", promhttp.Handler())
 
 	return m
 }

@@ -12,6 +12,12 @@ type LoggingMiddleware struct {
 	Next service.Service
 }
 
+func LoggingMiddlewareM(logger log.Logger) service.ServiceMiddleware {
+	return func(next service.Service) service.Service {
+		return LoggingMiddleware{logger, next}
+	}
+}
+
 func (l LoggingMiddleware) Login(username, password string) (ret string, err error) {
 	defer func(begin time.Time) {
 		_ = l.Logger.Log(
