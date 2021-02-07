@@ -6,43 +6,40 @@ import (
 	"time"
 )
 
-type metricMiddleware struct {
+type MetricMiddleware struct {
 	Service
-	requestCount metrics.Counter
-	requestLatency metrics.Histogram
+	RequestCount metrics.Counter
+	RequestLatency metrics.Histogram
 }
 
 func Metrics(requestCount metrics.Counter, requestLatency metrics.Histogram) ServiceMiddleware {
 	return func(service Service) Service {
-		return metricMiddleware{
+		return MetricMiddleware{
 			Service:        service,
-			requestCount:   requestCount,
-			requestLatency: requestLatency,
+			RequestCount:   requestCount,
+			RequestLatency: requestLatency,
 		}
 	}
 }
 
-func (mw metricMiddleware) Add (num1, num2 int) (ret int) {
+func (mw MetricMiddleware) Add (num1, num2 int) (ret int) {
 
 	defer func(begin time.Time) {
 		lvs := []string{"method", "Add", "err", ""}
-		mw.requestCount.With(lvs...).Add(1)
-		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
-
-
 	ret = mw.Service.Add(num1, num2)
 	return
 }
 
-func (mw metricMiddleware) Login(username, password string) (token string, err error) {
+func (mw MetricMiddleware) Login(username, password string) (token string, err error) {
 
 	defer func(begin time.Time) {
 		lvs := []string{"method", "login", "err", fmt.Sprint(err != nil)}
-		mw.requestCount.With(lvs...).Add(1)
-		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
-
 
 	token , err = mw.Service.Login(username, password)
 	return

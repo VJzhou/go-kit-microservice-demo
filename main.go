@@ -23,14 +23,14 @@ func main () {
 
 	requestCount := kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
 		Namespace:"test_group",
-		Subsystem:"AddService",
+		Subsystem:"add_service",
 		Name:"request_count",
 		Help: "Number of requests received",
 	}, fieldKeys)
 
 	requestLatency := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
 		Namespace:   "test_group",
-		Subsystem:   "AddService",
+		Subsystem:   "add_service",
 		Name:        "request_latency",
 		Help:        "Total duration of request in microsecond",
 	}, fieldKeys)
@@ -38,7 +38,7 @@ func main () {
 
 	server := service.NewService()
 	server = LoggingMiddleware{logger, server}
-	server = service.Metrics(requestCount, requestLatency)(server)
+	server = service.MetricMiddleware{Service: server, RequestCount:requestCount, RequestLatency:requestLatency}
 
 	endpoints := endpoint.NewEndpointSet(server)
 	httpHandle := transport.NewHTTPHandler(endpoints)

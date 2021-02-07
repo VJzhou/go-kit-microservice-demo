@@ -53,7 +53,7 @@ func NewHTTPHandler (ep endpoint.Set) http.Handler {
 		options...
 	))
 
-	m.Handle("/metric", promhttp.Handler())
+	m.Handle("/metrics", promhttp.Handler())
 
 	return m
 }

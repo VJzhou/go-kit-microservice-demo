@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  external_labels:
+    monitor: 'test-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          group: 'local'
+
+  - job_name: 'test_group'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['192.168.1.203:8999']
+        labels:
+          group: 'test'
