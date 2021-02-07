@@ -5,10 +5,10 @@ import (
 	"github.com/go-kit/kit/log"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
-	"go-kit-microservice-demo/endpoint"
-	"go-kit-microservice-demo/service"
-	"go-kit-microservice-demo/transport"
-
+	"go-kit-microservice-demo/register/endpoint"
+	"go-kit-microservice-demo/register/service"
+	"go-kit-microservice-demo/register/transport"
+	"go-kit-microservice-demo/register/util"
 	"net/http"
 	"os"
 	"os/signal"
@@ -37,14 +37,20 @@ func main () {
 
 
 	server := service.NewService()
-	server = LoggingMiddleware{logger, server}
+	server = service.LoggingMiddleware{logger, server}
+
 	server = service.MetricMiddleware{Service: server, RequestCount:requestCount, RequestLatency:requestLatency}
 
 	endpoints := endpoint.NewEndpointSet(server)
 	httpHandle := transport.NewHTTPHandler(endpoints)
 
+	// 注册服务对象
+	rg := util.Register("192.168.1.203", "8500", "192.168.1.203", "8999", logger)
+
+
 	go func() {
 		fmt.Println("Listen server at 8999 port")
+		rg.Register()
 		errChan <- http.ListenAndServe(":8999", httpHandle)
 	}()
 	go func() {
@@ -54,4 +60,5 @@ func main () {
 	}()
 
 	fmt.Println(<- errChan)
+	rg.Deregister()
 }

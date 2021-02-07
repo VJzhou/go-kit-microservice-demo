@@ -9,6 +9,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     privileged: true
+
   grafana:
     image: grafana/grafana
     ports:
@@ -17,3 +18,12 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - $PWD/extra/grafana_db:/var/lib/grafana grafana/grafana
+      -
+  consul:
+     container_name: consul
+     image: consul:latest
+     ports:
+       - 8500:8500
+       - 8600:8600/udp
+     hostname: consulserver
+     command: agent -server -bootstrap-expect=1 -ui -node=server-1 -client=0.0.0.0

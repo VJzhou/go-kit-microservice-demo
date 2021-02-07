@@ -6,8 +6,8 @@ import (
 	"github.com/go-kit/kit/log"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"go-kit-microservice-demo/endpoint"
-	"go-kit-microservice-demo/util"
+	"go-kit-microservice-demo/register/endpoint"
+	"go-kit-microservice-demo/register/util"
 	"golang.org/x/time/rate"
 	"net/http"
 	"os"
@@ -53,6 +53,13 @@ func NewHTTPHandler (ep endpoint.Set) http.Handler {
 		options...
 	))
 
+	m.Handle("/health", kithttp.NewServer(
+		ep.HealthCheckEndpoint,
+		decodeHTTPHealthCheckRequest,
+		encodeResponse,
+		options...
+	))
+
 	m.Handle("/metrics", promhttp.Handler())
 
 	return m
@@ -75,6 +82,10 @@ func decodeHTTPLoginRequest (ctx context.Context, r *http.Request) (interface{},
 		return nil, err
 	}
 	return req, nil
+}
+
+func decodeHTTPHealthCheckRequest (ctx context.Context, r *http.Request) (interface{}, error) {
+	return &endpoint.HealthCheckRequest{}, nil
 }
 
 func encodeResponse (ctx context.Context, w http.ResponseWriter, response interface{}) error {

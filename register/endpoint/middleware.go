@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-kit/kit/endpoint"
-	"go-kit-microservice-demo/util"
+	"go-kit-microservice-demo/register/util"
 	uberlimit "go.uber.org/ratelimit"
 	"golang.org/x/time/rate"
 
