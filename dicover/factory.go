@@ -1,4 +1,4 @@
-package dicover
+package main
 
 import (
 	"bytes"

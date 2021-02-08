@@ -1,24 +1,22 @@
-package dicover
+package main
 
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-kit/kit/endpoint"
+	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"net/http"
-	kithttp "github.com/go-kit/kit/transport/http"
-
 )
 
-func MakeHTTPHandler(endpoint endpoint.Endpoint) http.Handler {
+func MakeHTTPHandler(ep Set) http.Handler {
 	r := mux.NewRouter()
 
-	r.Methods("POST").Path("/add").Handler(kithttp.NewServer(endpoint,
+	r.Methods("POST").Path("/add").Handler(kithttp.NewServer(ep.AddEndpoint,
 		decodeAddRequest,
 		encodeJSONResponse,
 		))
 
-	r.Methods("POST").Path("/login").Handler(kithttp.NewServer(endpoint,
+	r.Methods("POST").Path("/login").Handler(kithttp.NewServer(ep.LoginEndpoint,
 		decodeLoginRequest,
 		encodeJSONResponse,
 	))
